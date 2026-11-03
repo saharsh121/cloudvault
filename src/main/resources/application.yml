@@ -1,0 +1,21 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/Cloudvault
+  
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+cloudinary:
+  cloud_name: muucazyj
+  api_key: 267699189791891
+  api_secret: iOGT1VI3iL8ol9ilLT6zOL4Y4yQ
+
+server:
+  port: 8080
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CloudVault - Dashboard</title>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+<nav class="navbar-dashboard">
+<div class="container">
+<span class="brand">CloudVault</span>
+<div class="nav-links">
+<a href="/" class="btn-home">Home</a>
+<a href="/logout" class="btn-logout">Logout</a>
+</div>
+</div>
+</nav>
+<div class="dashboard-container">
+<div th:if="${message}" class="alert alert-success">
+<span th:text="${message}"></span>
+</div>
+<div th:if="${error}" class="alert alert-danger">
+<span th:text="${error}"></span>
+</div>
+<div class="dashboard-header">
+<h1>Dashboard</h1>
+<span class="welcome-text">Welcome, <strong th:text="${session.user != null ? session.user.name : 'User'}"></strong></span>
+</div>
+<div class="section-card">
+<h2>Upload Files</h2>
+<div class="option-grid" id="uploadOptions">
+<a href="#" class="option-btn" onclick="showUpload('images'); return false;">
+<span>Upload Images</span>
+<span class="sub-text">JPG, PNG, GIF, etc.</span>
+</a>
+<a href="#" class="option-btn" onclick="showUpload('videos'); return false;">
+<span>Upload Videos</span>
+<span class="sub-text">MP4, AVI, MKV, etc.</span>
+</a>
+<a href="#" class="option-btn" onclick="showUpload('documents'); return false;">
+<span>Upload Documents</span>
+<span class="sub-text">PDF, DOC, TXT, etc.</span>
+</a>
+<a href="#" class="option-btn" onclick="showUpload('audio'); return false;">
+<span>Upload Audio</span>
+<span class="sub-text">MP3, WAV, etc.</span>
+</a>
+</div>
+<div id="upload-images" class="upload-section">
+<button type="button" class="back-btn" onclick="hideUpload('images')">Back</button>
+<div style="border: 2px dashed #2d3436; border-radius: 10px; padding: 40px; text-align: center; background: white;">
+<h4 style="color: #2d3436;">Upload Images</h4>
+<p id="imagesStatus" style="color: #6c757d;">No images selected</p>
+<p class="file-types" style="font-size: 12px; color: #999;">Supports: JPG, PNG, GIF, BMP, SVG</p>
+<div style="margin-top: 15px;">
+<button type="button" onclick="document.getElementById('imagesInput').click()" style="background: #2d3436; color: white; padding: 12px 30px; border-radius: 50px; cursor: pointer; border: none; font-size: 16px;">Choose Images</button>
+<input type="file" id="imagesInput" name="files" multiple accept="image/*" style="display: none;" onchange="updateFileStatus('images')">
+</div>
+<div style="margin-top: 15px;">
+<button type="button" class="upload-btn" onclick="uploadFiles('images')">Upload Now</button>
+</div>
+</div>
+</div>
+<div id="upload-videos" class="upload-section">
+<button type="button" class="back-btn" onclick="hideUpload('videos')">Back</button>
+<div style="border: 2px dashed #2d3436; border-radius: 10px; padding: 40px; text-align: center; background: white;">
+<h4 style="color: #2d3436;">Upload Videos</h4>
+<p id="videosStatus" style="color: #6c757d;">No videos selected</p>
+<p class="file-types" style="font-size: 12px; color: #999;">Supports: MP4, AVI, MKV, MOV, WMV</p>
+<div style="margin-top: 15px;">
+<button type="button" onclick="document.getElementById('videosInput').click()" style="background: #2d3436; color: white; padding: 12px 30px; border-radius: 50px; cursor: pointer; border: none; font-size: 16px;">Choose Videos</button>
+<input type="file" id="videosInput" name="files" multiple accept="video/*" style="display: none;" onchange="updateFileStatus('videos')">
+</div>
+<div style="margin-top: 15px;">
+<button type="button" class="upload-btn" onclick="uploadFiles('videos')">Upload Now</button>
+</div>
+</div>
+</div>
+<div id="upload-documents" class="upload-section">
+<button type="button" class="back-btn" onclick="hideUpload('documents')">Back</button>
+<div style="border: 2px dashed #2d3436; border-radius: 10px; padding: 40px; text-align: center; background: white;">
+<h4 style="color: #2d3436;">Upload Documents</h4>
+<p id="documentsStatus" style="color: #6c757d;">No documents selected</p>
+<p class="file-types" style="font-size: 12px; color: #999;">Supports: PDF, DOC, DOCX, TXT, XLS, PPT</p>
+<div style="margin-top: 15px;">
+<button type="button" onclick="document.getElementById('documentsInput').click()" style="background: #2d3436; color: white; padding: 12px 30px; border-radius: 50px; cursor: pointer; border: none; font-size: 16px;">Choose Documents</button>
+<input type="file" id="documentsInput" name="files" multiple accept=".pdf,.doc,.docx,.txt,.xls,.xlsx,.ppt,.pptx" style="display: none;" onchange="updateFileStatus('documents')">
+</div>
+<div style="margin-top: 15px;">
+<button type="button" class="upload-btn" onclick="uploadFiles('documents')">Upload Now</button>
+</div>
+</div>
+</div>
+<div id="upload-audio" class="upload-section">
+<button type="button" class="back-btn" onclick="hideUpload('audio')">Back</button>
+<div style="border: 2px dashed #2d3436; border-radius: 10px; padding: 40px; text-align: center; background: white;">
+<h4 style="color: #2d3436;">Upload Audio</h4>
+<p id="audioStatus" style="color: #6c757d;">No audio files selected</p>
+<p class="file-types" style="font-size: 12px; color: #999;">Supports: MP3, WAV, FLAC, AAC</p>
+<div style="margin-top: 15px;">
+<button type="button" onclick="document.getElementById('audioInput').click()" style="background: #2d3436; color: white; padding: 12px 30px; border-radius: 50px; cursor: pointer; border: none; font-size: 16px;">Choose Audio</button>
+<input type="file" id="audioInput" name="files" multiple accept="audio/*" style="display: none;" onchange="updateFileStatus('audio')">
+</div>
+<div style="margin-top: 15px;">
+<button type="button" class="upload-btn" onclick="uploadFiles('audio')">Upload Now</button>
+</div>
+</div>
+</div>
+</div>
+<div class="section-card">
+<h2>View Files</h2>
+<div class="view-options" id="viewOptions">
+<a href="/view/images" class="view-btn"><span>Images</span></a>
+<a href="/view/videos" class="view-btn"><span>Videos</span></a>
+<a href="/view/documents" class="view-btn"><span>Documents</span></a>
+<a href="/view/audio" class="view-btn"><span>Audio</span></a>
+</div>
+</div>
+</div>
+<script src="/js/dashboard.js"></script>
+</body>
+</html>

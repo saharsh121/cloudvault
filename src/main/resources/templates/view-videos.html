@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CloudVault - My Videos</title>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/dashboard.css">
+<style>
+.videos-page {
+max-width: 1200px;
+margin: 40px auto;
+padding: 0 20px;
+}
+.videos-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 25px;
+gap: 15px;
+flex-wrap: wrap;
+}
+.videos-header h1 {
+margin: 0;
+color: #2d3436;
+font-size: 30px;
+}
+.back-dashboard {
+display: inline-flex;
+align-items: center;
+gap: 7px;
+text-decoration: none;
+background: #2d3436;
+color: white;
+padding: 9px 17px;
+border-radius: 20px;
+font-size: 14px;
+transition: 0.2s;
+}
+.back-dashboard:hover {
+background: #000;
+}
+.video-count {
+background: white;
+padding: 13px 18px;
+border-radius: 10px;
+margin-bottom: 25px;
+box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+color: #636e72;
+font-size: 14px;
+}
+.video-count strong {
+color: #2d3436;
+}
+.video-grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+gap: 22px;
+}
+.video-card {
+background: white;
+border-radius: 12px;
+overflow: hidden;
+box-shadow: 0 4px 15px rgba(0, 0, 0, 0.09);
+transition: transform 0.2s, box-shadow 0.2s;
+}
+.video-card:hover {
+transform: translateY(-3px);
+box-shadow: 0 7px 20px rgba(0, 0, 0, 0.13);
+}
+.video-preview {
+width: 100%;
+height: 210px;
+background: #1e272e;
+display: flex;
+align-items: center;
+justify-content: center;
+overflow: hidden;
+}
+.video-preview video {
+width: 100%;
+height: 100%;
+object-fit: cover;
+display: block;
+background: #1e272e;
+}
+.video-info {
+padding: 15px;
+}
+.video-name {
+font-size: 16px;
+font-weight: 600;
+color: #2d3436;
+margin-bottom: 10px;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+}
+.video-details {
+font-size: 12px;
+color: #777;
+margin-bottom: 13px;
+}
+.video-details div {
+margin-bottom: 5px;
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+}
+.video-actions {
+display: flex;
+align-items: center;
+gap: 6px;
+}
+.video-actions a,
+.video-actions button {
+flex: 0 0 auto;
+min-width: 0;
+padding: 7px 10px;
+border: none;
+border-radius: 6px;
+cursor: pointer;
+text-decoration: none;
+text-align: center;
+font-size: 12px;
+line-height: 1;
+transition: 0.2s;
+}
+.view-btn {
+background: #0984e3;
+color: white;
+}
+.view-btn:hover {
+background: #076bb5;
+}
+.download-btn {
+background: #00b894;
+color: white;
+}
+.download-btn:hover {
+background: #009b7d;
+}
+.delete-btn {
+background: #d63031;
+color: white;
+}
+.delete-btn:hover {
+background: #b71c1c;
+}
+.delete-btn:disabled {
+opacity: 0.6;
+cursor: not-allowed;
+}
+.video-actions form {
+margin: 0;
+padding: 0;
+display: inline-block;
+}
+.empty-state {
+background: white;
+border-radius: 12px;
+padding: 70px 20px;
+text-align: center;
+box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+.empty-state h2 {
+color: #2d3436;
+margin-bottom: 8px;
+}
+.empty-state p {
+color: #777;
+margin-bottom: 20px;
+}
+.upload-link {
+display: inline-block;
+text-decoration: none;
+background: #2d3436;
+color: white;
+padding: 10px 20px;
+border-radius: 22px;
+font-size: 14px;
+}
+.upload-link:hover {
+background: #000;
+}
+.video-error {
+display: none;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+height: 100%;
+color: #b2bec3;
+text-align: center;
+padding: 20px;
+}
+.video-error span {
+font-size: 13px;
+}
+@media (max-width: 600px) {
+.videos-page {
+margin: 20px auto;
+}
+.videos-header {
+flex-direction: column;
+align-items: flex-start;
+}
+.video-grid {
+grid-template-columns: 1fr;
+}
+.video-preview {
+height: 230px;
+}
+}
+</style>
+</head>
+<body>
+<nav class="navbar-dashboard">
+<div class="container">
+<span class="brand">CloudVault</span>
+<div class="nav-links">
+<a href="/dashboard" class="btn-home">Dashboard</a>
+<a href="/logout" class="btn-logout">Logout</a>
+</div>
+</div>
+</nav>
+<div class="videos-page">
+<div class="videos-header">
+<h1>My Videos</h1>
+<a href="/dashboard" class="back-dashboard">Back to Dashboard</a>
+</div>
+<div class="video-count">
+You have <strong th:text="${fileCount}">0</strong> video(s) stored in CloudVault.
+</div>
+<div class="video-grid" th:if="${files != null and !files.isEmpty()}">
+<div class="video-card" th:each="file : ${files}">
+<div class="video-preview">
+<video controls preload="metadata" th:attr="data-video-url=${file.cloudinaryUrl}">
+<source th:src="${file.cloudinaryUrl}" th:type="${file.mimeType}">
+Your browser does not support video playback.
+</video>
+</div>
+<div class="video-info">
+<div class="video-name" th:title="${file.originalName}" th:text="${file.originalName}">video.mp4</div>
+<div class="video-details">
+<div>Type: <span th:text="${file.mimeType}">video/mp4</span></div>
+<div>Size: <span class="file-size" th:attr="data-size=${file.fileSize}">0 KB</span></div>
+<div>Uploaded: <span th:text="${#temporals.format(file.uploadDate, 'dd MMM yyyy HH:mm')}">05 Sep 2026 15:00</span></div>
+</div>
+<div class="video-actions">
+<a th:href="${file.cloudinaryUrl}" target="_blank" class="view-btn" title="View video">View</a>
+<a th:href="@{/download/{id}(id=${file.id})}" class="download-btn" title="Download video">Download</a>
+<form th:action="@{/delete/{id}(id=${file.id})}" method="post" onsubmit="return confirmDelete(this);">
+<button type="submit" class="delete-btn" title="Delete video">Delete</button>
+</form>
+</div>
+</div>
+</div>
+</div>
+<div class="empty-state" th:if="${files == null or files.isEmpty()}">
+<h2>No Videos Found</h2>
+<p>You haven't uploaded any videos yet.</p>
+<a href="/dashboard" class="upload-link">Upload Videos</a>
+</div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+const sizeElements = document.querySelectorAll(".file-size");
+sizeElements.forEach(function (element) {
+const bytes = parseInt(element.getAttribute("data-size"));
+if (isNaN(bytes)) {
+element.textContent = "Unknown";
+return;
+}
+let size;
+let unit;
+if (bytes < 1024) {
+size = bytes;
+unit = "B";
+}
+else if (bytes < 1024 * 1024) {
+size = bytes / 1024;
+unit = "KB";
+}
+else if (bytes < 1024 * 1024 * 1024) {
+size = bytes / (1024 * 1024);
+unit = "MB";
+}
+else {
+size = bytes / (1024 * 1024 * 1024);
+unit = "GB";
+}
+element.textContent = size.toFixed(2) + " " + unit;
+});
+});
+function confirmDelete(form) {
+const result = confirm(
+"Are you sure you want to delete this video?\n\n"
++
+"The video will be permanently deleted from "
++
+"Cloudinary and CloudVault."
+);
+if (!result) {
+return false;
+}
+const button = form.querySelector("button");
+if (button) {
+button.disabled = true;
+button.innerHTML = "Deleting...";
+}
+return true;
+}
+document.addEventListener("DOMContentLoaded", function () {
+const videos = document.querySelectorAll(".video-preview video");
+videos.forEach(function (video) {
+video.addEventListener("error", function () {
+console.log(
+"Video could not be loaded:",
+video.getAttribute("data-video-url")
+);
+});
+});
+});
+</script>
+</body>
+</html>
